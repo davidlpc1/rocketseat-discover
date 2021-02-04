@@ -219,6 +219,10 @@ td.expense {
     color: #e92929;
 }
 
+.remove_transaction{
+    cursor: pointer;
+}
+
 /* ===   Modal   === */
 .modal-overlay {
     width: 100%;
@@ -271,7 +275,7 @@ td.expense {
     width: 100%;
 }
 
-.input-group small{
+.input-group .help{
     opacity: 0.4;
 }
 
@@ -284,6 +288,22 @@ td.expense {
 .input-group.actions a.button, 
 .input-group.actions button {
     width: 48%;
+}
+
+.error-line{
+    position:absolute;
+    top:0;
+    left:0;
+    background:var(--red);
+    opacity:0.6;
+    width: 0%;
+    height: 10px;
+}
+
+.input-group.error p{
+    text-align: center;
+    font-size: 15px;
+    color: var(--red);
 }
 
 /* ===   Footer   === */
