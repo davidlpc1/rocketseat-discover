@@ -2,9 +2,26 @@
 
 :root {
   --dark-blue:#363f5f;
+  --modal:#363f5f;
   --green:#49aa26 ;
   --light-green:#3dd705 ;
   --red:#e92929;
+  --white: #fff;
+  --gray:#f0f2f5;
+  --table: #969cb3;
+  --header: #2d4a22;
+}
+
+.dark-mode:root {
+    --dark-blue:#121933;
+    --green:#47c018 ;
+    --light-green:#1f7400 ;
+    --red:#f00000;
+    --white: #c2c2c2;
+    --gray:#6b6969;
+    --table: #333232;
+    --header: #0d2603 ;
+    --modal: #e5e5e5;
 }
 
 *  {
@@ -18,7 +35,7 @@ html {
 }
 
 body  {
-    background: #f0f2f5;
+    background: var(--gray);
     font-family: 'Poppins', sans-serif;
 }
 
@@ -66,7 +83,7 @@ button{
     border: none;
     border-radius: 0.25rem;
 
-    color: white;
+    color: var(--white);
     background:var(--green);
 
     padding: 0;
@@ -107,13 +124,13 @@ button:hover{
 /* ===   Header   === */
 
 header {
-    background:#2D4A22;
+    background:var(--header);
     padding:2rem 0 10rem;
     text-align:center;
 }
 
 #logo   {
-    color:#fff;
+    color: var(--white);
     font-weight:100;
 }
 
@@ -124,12 +141,12 @@ header {
 
 #balance h2  {
     margin-top:0;
-    color:#fff;
+    color: var(--white);
 }
 
 /* ===   Cards   === */
 .card {
-    background:white;
+    background: var(--white);
     padding:1.5rem 2rem;
     border-radius: 0.25rem;
 
@@ -156,7 +173,61 @@ header {
 
 .card.total {
     background: var(--green);
-    color:white
+    color: var(--white);
+}
+
+/* === Dark mode Button === */
+
+.toggle{
+    margin: 1.4rem;
+    display:flex;
+    justify-content:center;
+}
+
+.toggle p{
+    color: var(--white);
+}
+
+input[type=checkbox]{
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
+label.checkbox {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 52px;
+    height: 27px;
+    background: grey;
+    float: right;
+    border-radius: 100px;
+    position: relative;
+}
+
+label.checkbox::after{
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 90px;
+    transition: 0.3s;
+}
+
+input:checked + label.checkbox {
+    background-color: #0077FF;
+}
+
+input:checked + label.checkbox::after {
+    left: calc(100% - 5px);
+    transform: translateX(-100%);
+}
+
+label.checkbox:active:after {
+    width: 45px;
 }
 
 /* ===   Transactions   === */
@@ -170,7 +241,7 @@ header {
     width: 100%;
 
     border-spacing: 0 0.5rem;
-    color: #969cb3;
+    color:var(--table);
 
 }
 
@@ -186,7 +257,7 @@ table tbody tr td:last-child {
 }
 
 table thead th {
-    background: white;
+    background:  var(--white);
 
     font-weight: normal;
     padding: 1rem 2rem;
@@ -203,7 +274,7 @@ table tbody tr:hover {
 }
 
 table tbody td {
-    background:white;
+    background: var(--white);
     padding: 1rem 2rem;
 }
 
@@ -249,7 +320,7 @@ td.expense {
 }
 
 .modal {
-    background: #f0f2f5;
+    background: var(--gray);
     padding: 2.4rem;
 }
 
@@ -260,6 +331,7 @@ td.expense {
 
 #form h2{
     margin-top: 0;
+    color: var(--modal);
 }
 
 .input-group{
@@ -276,6 +348,7 @@ td.expense {
 }
 
 .input-group .help{
+    color: var(--modal);
     opacity: 0.4;
 }
 

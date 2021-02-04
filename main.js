@@ -246,9 +246,34 @@ function start(){
         })
     }
 
+    function DarkMode(){
+        const darkModeCheckbox = document.querySelector('#switch')
+
+        function changeText(hasDarkMode){
+            const p = document.querySelector('.toggle p')
+            p.textContent = hasDarkMode ? 'Dark Mode' : 'Light Mode';
+        }
+
+        const onChangeButton = () => {
+            const html = document.querySelector('html')
+            const hasDarkMode = html.classList.toggle('dark-mode')
+            
+            localStorage.setItem("dev.finances:mode", String(hasDarkMode))
+            changeText(hasDarkMode)
+        }
+
+        const hasDarkMode = (localStorage.getItem("dev.finances:mode") || "false") === "false" ? false : true;
+        
+        changeText(hasDarkMode)
+        if(hasDarkMode) onChangeButton()
+
+        darkModeCheckbox.addEventListener('change',onChangeButton)
+    }
+
     return () => {
-        Modal();
+        DarkMode();
         const { TransactionFunctions,App } = Transactions();
+        Modal();
         Form(TransactionFunctions);
         App.init()
     }
