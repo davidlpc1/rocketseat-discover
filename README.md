@@ -12,7 +12,7 @@
 <br>
 
 <p align="center">
-  <img alt="dev.finances" src="./.github/preview.png" width="100%">
+  <img alt="dev.finances" src="./.github/preview.PNG" width="100%">
 </p>
 
 ## 🚀 Tecnologias
