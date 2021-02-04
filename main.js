@@ -87,7 +87,10 @@ function start(){
                tr.innerHTML = DOM.innerHtmlTransaction(transaction,index)
                tr.dataset.index = index
                const image = tr.querySelector(`img#remove_${index}`)
-               image.addEventListener('click',() => TransactionFunctions.remove(index))
+               image.addEventListener('click',() => {
+                  TransactionFunctions.remove(index)
+                  window.NotificateUser(`A transação selecionada foi removida`)
+               })
 
                DOM.transactionsContainer.appendChild(tr)
 
@@ -239,6 +242,7 @@ function start(){
                 validateFields()
                 const transaction = formatValues()
                 window.TransactionFunctions.add(transaction)
+                window.NotificateUser(`A transação ${transaction.description} foi adicionada`)
                 clearFields()
                 closeModal()
             }catch(error){
@@ -253,6 +257,7 @@ function start(){
         function changeText(hasDarkMode){
             const p = document.querySelector('.toggle p')
             p.textContent = hasDarkMode ? 'Dark Mode' : 'Light Mode';
+            window.NotificateUser(`Tema selecionado:${p.textContent || 'Light Mode'}`)
         }
 
         const onChangeButton = () => {
@@ -271,7 +276,24 @@ function start(){
         darkModeCheckbox.addEventListener('change',onChangeButton)
     }
 
+    function Notifications(message){
+        if (!("Notification" in window)) return;
+        if(!message) return
+        
+        if (Notification.permission === "granted") {
+            const notification = new Notification(message);
+        }
+        
+        else if (Notification.permission !== 'denied') {
+            Notification.requestPermission( permission => {
+              if (permission === "granted") {
+                const notification = new Notification(message);
+            }})
+        }
+    }
+
     return () => {
+        window.NotificateUser = Notifications;
         DarkMode();
         Transactions();
         Modal();
