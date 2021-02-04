@@ -10,7 +10,7 @@
   --gray: #f0f2f5;
   --table: #969cb3;
   --header: #2d4a22;
-  --squares:#f0f2f533;
+  --squares: #f0f2f533;
 }
 
 .dark-mode:root {
@@ -23,7 +23,7 @@
   --table: #333232;
   --header: #0d2603;
   --modal: #e5e5e5;
-  --squares:#6b696933;
+  --squares: #6b696933;
 }
 
 * {
@@ -159,7 +159,7 @@ header {
   margin-bottom: 2rem;
 
   color: var(--dark-blue);
-  z-index:99;
+  z-index: 99;
 }
 
 .card h3 {
@@ -408,7 +408,7 @@ td.expense {
   height: 40px;
 
   opacity: 0.1;
-  background-color:var(--squares);
+  background-color: var(--squares);
 
   display: block;
   position: absolute;
