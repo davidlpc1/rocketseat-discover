@@ -40,7 +40,7 @@ body {
   height: 100%;
   background: var(--gray);
   font-family: "Poppins", sans-serif;
-  overflow: hidden;
+  overflow-x:hidden ;
 }
 
 .sr-only {
@@ -125,6 +125,16 @@ button:hover {
 
 .button.cancel:hover {
   opacity: 1;
+}
+
+.button.download {
+  position:absolute;
+  max-width: 100px;
+  padding: 10px;
+  bottom: -30%;
+  left: 3%;
+  cursor:pointer;
+  z-index:999;
 }
 
 /* ===   Header   === */
@@ -434,5 +444,9 @@ footer {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
+  }
+
+  .button.download {
+    bottom: 3%;
   }
 }

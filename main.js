@@ -144,7 +144,8 @@ function start(){
             reload(){
                 DOM.clearTransactions()
                 App.init()
-            }
+            },
+            getTransactions:() => TransactionFunctions.all
         }
 
         window.APP = App;
@@ -301,13 +302,14 @@ function start(){
             const li = document.createElement("li")
 
             const size = Math.floor(random(10,120));
+            const bottom = Math.floor(random(1,20));
             const position = random(1, 99);
             const delay = random(5, 0.1);
             const duration = random(24, 12);
 
             li.style.width = `${size}px`;
             li.style.height = `${size}px`;
-            li.style.bottom = `-${size}px`;
+            li.style.bottom = `${bottom}px`;
 
             li.style.left = `${position}%`
 
@@ -319,11 +321,32 @@ function start(){
         }
     }
 
+    function DownloadJSON(){
+        const downloadButton = document.querySelector('.button.download');
+        downloadButton.addEventListener('click',() => {
+            const transactionsInString = JSON.stringify(window.APP.getTransactions(),null, 4)
+            const blobOfFile = new Blob([ transactionsInString ], {
+                type: 'application/json'
+            })
+            const anchora = document.createElement('a')
+            anchora.href = window.URL.createObjectURL(blobOfFile);
+            const filename = `transactions-${Date.now()}.json`
+            anchora.download = filename
+
+            document.body.appendChild(anchora)
+            anchora.click()
+            document.body.removeChild(anchora)   
+            
+            window.NotificateUser(`O arquivo ${filename} foi baixado`) 
+        })
+    }
+
     return () => {
         window.NotificateUser = Notifications;
         Squares()
         DarkMode();
         Transactions();
+        DownloadJSON();
         Modal();
         Form();
         window.APP.init()
