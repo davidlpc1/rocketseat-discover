@@ -1,6 +1,33 @@
 window.addEventListener('DOMContentLoaded',start())
 
 function start(){
+    const Utils = {
+        formatCurrency(value){
+            const signal = Number(value) < 0 ? "-" : '';
+            
+            const onlyDigitsInString = String(value).replace(/\D/g,"")
+            const formatedValue = Number(onlyDigitsInString) / 100
+            const currency = formatedValue.toLocaleString("pt-br",{
+                style: "currency",
+                currency:"BRL"
+            })
+
+            return signal + currency
+        },
+        sleep(ms) {
+            return new Promise(r => setTimeout(r,ms))
+        },
+
+        formatAmount(value){
+            return Math.round(value * 100) 
+        },
+
+        formatDate(date){
+            const [ year,month,day ] = date.split("-")
+            return `${day}/${month}/${year}`
+        }
+    }
+
     function Modal(){
         const ModalElement = document.querySelector('.modal-overlay')
         const openModalButton = document.querySelector('.button.new')
@@ -15,22 +42,6 @@ function start(){
     }
 
     function Transactions(){
-
-        const Utils = {
-            formatCurrency(value){
-                const signal = Number(value) < 0 ? "-" : '';
-                
-                const onlyDigitsInString = String(value).replace(/\D/g,"")
-                const formatedValue = Number(onlyDigitsInString) / 100
-                const currency = formatedValue.toLocaleString("pt-br",{
-                    style: "currency",
-                    currency:"BRL"
-                })
-
-                return signal + currency
-            }
-        }
-
         const Storage = {
             get(){
                 return JSON.parse(localStorage.getItem("dev.finances:transactions")) || []
@@ -156,21 +167,6 @@ function start(){
         const amountInput = document.querySelector('input#amount')
         const dateInput = document.querySelector('input#date')
 
-        const Utils = {
-            sleep(ms) {
-                return new Promise(r => setTimeout(r,ms))
-            },
-
-            formatAmount(value){
-                return Number(value.replace(/\,\./g, "")) * 100 
-            },
-
-            formatDate(date){
-                const [ year,month,day ] = date.split("-")
-                return `${day}/${month}/${year}`
-            }
-        }
-        
         function getValues(){
             return {
                 description: descriptionInput.value,
@@ -301,13 +297,14 @@ function start(){
             const li = document.createElement("li")
 
             const size = Math.floor(random(10,120));
+            const bottom = Math.floor(random(1,20));
             const position = random(1, 99);
             const delay = random(5, 0.1);
             const duration = random(24, 12);
 
             li.style.width = `${size}px`;
             li.style.height = `${size}px`;
-            li.style.bottom = `-${size}px`;
+            li.style.bottom = `${bottom}px`;
 
             li.style.left = `${position}%`
 
@@ -319,11 +316,49 @@ function start(){
         }
     }
 
+    function DownloadJSON(){
+        const downloadButton = document.querySelector('.button.download');
+
+        function getText(){
+            const array = [];
+            window.TransactionFunctions.all.forEach(({ amount,description,date }) => {
+                const formatedAmount = Utils.formatCurrency(amount);
+                array.push({ formatedAmount, description, date })
+            })
+
+            array.push({ 
+                incomes:Utils.formatCurrency(TransactionFunctions.incomes()) ,
+                expenses:Utils.formatCurrency(TransactionFunctions.expenses()) ,
+                total:Utils.formatCurrency(TransactionFunctions.total()) ,
+            })
+
+            return array
+        }
+
+        downloadButton.addEventListener('click',() => {
+            const transactionsInString = JSON.stringify(getText(),null, 4)
+            const blobOfFile = new Blob([ transactionsInString ], {
+                type: 'application/json'
+            })
+            const anchora = document.createElement('a')
+            anchora.href = window.URL.createObjectURL(blobOfFile);
+            const filename = `transactions-${Date.now()}.json`
+            anchora.download = filename
+
+            document.body.appendChild(anchora)
+            anchora.click()
+            document.body.removeChild(anchora)   
+            
+            window.NotificateUser(`O arquivo ${filename} foi baixado`) 
+        })
+    }
+
     return () => {
         window.NotificateUser = Notifications;
         Squares()
         DarkMode();
         Transactions();
+        DownloadJSON();
         Modal();
         Form();
         window.APP.init()
