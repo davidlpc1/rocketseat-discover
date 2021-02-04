@@ -144,10 +144,11 @@ function start(){
             }
         }
 
-        return { TransactionFunctions,App };
+        window.APP = App;
+        window.TransactionFunctions = TransactionFunctions;
     }
 
-    function Form(TransactionFunctions){
+    function Form(){
         const descriptionInput = document.querySelector('input#description')
         const amountInput = document.querySelector('input#amount')
         const dateInput = document.querySelector('input#date')
@@ -237,7 +238,7 @@ function start(){
                 removeErrors()
                 validateFields()
                 const transaction = formatValues()
-                TransactionFunctions.add(transaction)
+                window.TransactionFunctions.add(transaction)
                 clearFields()
                 closeModal()
             }catch(error){
@@ -263,7 +264,7 @@ function start(){
         }
 
         const hasDarkMode = (localStorage.getItem("dev.finances:mode") || "false") === "false" ? false : true;
-        
+
         changeText(hasDarkMode)
         if(hasDarkMode) onChangeButton()
 
@@ -272,9 +273,9 @@ function start(){
 
     return () => {
         DarkMode();
-        const { TransactionFunctions,App } = Transactions();
+        Transactions();
         Modal();
-        Form(TransactionFunctions);
-        App.init()
+        Form();
+        window.APP.init()
     }
 }
