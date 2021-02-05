@@ -28,10 +28,10 @@ function start(){
         }
     }
 
-    function Modal(){
-        const ModalElement = document.querySelector('.modal-overlay')
+    function FormModal(){
+        const ModalElement = document.querySelector('.modal-overlay.form')
         const openModalButton = document.querySelector('.button.new')
-        const cancelModalUse = document.querySelector('.button.cancel')
+        const cancelModalUse = document.querySelector('.button.cancel.form')
     
         const ModalFunctions = {
             toggle:() => () => ModalElement.classList.toggle('active')
@@ -317,7 +317,11 @@ function start(){
     }
 
     function DownloadJSON(){
-        const downloadButton = document.querySelector('.button.download');
+        const downloadModal = document.querySelector('.modal-overlay.download')
+
+        const downloadButton = document.querySelector('.button.open-modal-download');
+        const closeModalButton = document.querySelector('.button.cancel-download')
+        const saveJsonButton = document.querySelector('.button.download-json')
 
         function getText(){
             const array = [];
@@ -336,7 +340,16 @@ function start(){
         }
 
         downloadButton.addEventListener('click',() => {
-            const transactionsInString = JSON.stringify(getText(),null, 4)
+            const transactionsInString = JSON.stringify(getText(),null, 4);
+
+            downloadModal.classList.add('active')
+            downloadModal.querySelector('pre').innerHTML = transactionsInString;
+        })
+
+        closeModalButton.addEventListener('click',() => downloadModal.classList.remove('active'))
+          
+        saveJsonButton.addEventListener('click',() => {
+            const transactionsInString = JSON.stringify(getText(),null, 4);
             const blobOfFile = new Blob([ transactionsInString ], {
                 type: 'application/json'
             })
@@ -349,6 +362,7 @@ function start(){
             anchora.click()
             document.body.removeChild(anchora)   
             
+            downloadModal.classList.remove('active')
             window.NotificateUser(`O arquivo ${filename} foi baixado`) 
         })
     }
@@ -359,7 +373,7 @@ function start(){
         DarkMode();
         Transactions();
         DownloadJSON();
-        Modal();
+        FormModal();
         Form();
         window.APP.init()
     }

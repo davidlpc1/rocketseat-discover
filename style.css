@@ -127,7 +127,7 @@ button:hover {
   opacity: 1;
 }
 
-.button.download {
+.button.open-modal-download {
   position:absolute;
   max-width: 100px;
   padding: 10px;
@@ -342,6 +342,10 @@ td.expense {
   padding: 2.4rem;
 }
 
+.modal-overlay.download pre {
+  margin: 10px
+}
+
 /* ===   Form   === */
 #form {
   max-width: 500px;
@@ -446,7 +450,7 @@ footer {
     gap: 2rem;
   }
 
-  .button.download {
+  .button.open-modal-download {
     bottom: 3%;
   }
 }

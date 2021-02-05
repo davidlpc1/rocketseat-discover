@@ -94,7 +94,7 @@
       </section>
     </main>
 
-    <div class="modal-overlay">
+    <div class="modal-overlay form">
       <div class="error-line"></div>
       <div class="modal">
         <div id="form">
@@ -136,7 +136,7 @@
             </div>
 
             <div class="input-group actions">
-              <a href="#" class="button cancel">Cancelar</a>
+              <a href="#" class="button cancel form">Cancelar</a>
               <button>Salvar</button>
             </div>
           </form>
@@ -144,10 +144,22 @@
       </div>
     </div>
 
+    
+    <button class="button open-modal-download">Download JSON</button>
+
+    <div class="modal-overlay download">
+      <div class="modal">
+        O conteudo do arquivo a ser baixado é:
+        <pre></pre>
+        <div class="input-group actions">
+          <a href="#" class="button cancel cancel-download">Cancelar</a>
+          <button class="button download-json">Baixar</button>
+        </div>
+      </div>
+    </div>
+
     <ul class="squares">
     </ul>
-
-    <button class="button download">Download JSON</button>
 
     <footer>
       <p>dev.finance$</p>
