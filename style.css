@@ -205,6 +205,7 @@ header {
 
 .toggle p {
   color: var(--white);
+  margin-right: .4rem;
 }
 
 input[type="checkbox"] {
