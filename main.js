@@ -1,119 +1,126 @@
-window.addEventListener('DOMContentLoaded',start())
+window.addEventListener("DOMContentLoaded", start());
 
-function start(){
-    const Utils = {
-        formatCurrency(value){
-            const signal = Number(value) < 0 ? "-" : '';
-            
-            const onlyDigitsInString = String(value).replace(/\D/g,"")
-            const formatedValue = Number(onlyDigitsInString) / 100
-            const currency = formatedValue.toLocaleString("pt-br",{
-                style: "currency",
-                currency:"BRL"
-            })
+function start() {
+  const Utils = {
+    formatCurrency(value) {
+      const signal = Number(value) < 0 ? "-" : "";
 
-            return signal + currency
-        },
-        sleep(ms) {
-            return new Promise(r => setTimeout(r,ms))
-        },
+      const onlyDigitsInString = String(value).replace(/\D/g, "");
+      const formatedValue = Number(onlyDigitsInString) / 100;
+      const currency = formatedValue.toLocaleString("pt-br", {
+        style: "currency",
+        currency: "BRL",
+      });
 
-        formatAmount(value){
-            return Math.round(value * 100) 
-        },
+      return signal + currency;
+    },
+    sleep(ms) {
+      return new Promise((r) => setTimeout(r, ms));
+    },
 
-        formatDate(date){
-            const [ year,month,day ] = date.split("-")
-            return `${day}/${month}/${year}`
-        }
-    }
+    formatAmount(value) {
+      return Math.round(value * 100);
+    },
 
-    function FormModal(){
-        const ModalElement = document.querySelector('.modal-overlay.form')
-        const openModalButton = document.querySelector('.button.new')
-        const cancelModalUse = document.querySelector('.button.cancel.form')
-    
-        const ModalFunctions = {
-            toggle:() => () => ModalElement.classList.toggle('active')
-        }
-    
-        openModalButton.addEventListener('click',ModalFunctions.toggle())
-        cancelModalUse.addEventListener('click',ModalFunctions.toggle())
-    }
+    formatDate(date) {
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
+    },
+  };
 
-    function Transactions(){
-        const Storage = {
-            get(){
-                return JSON.parse(localStorage.getItem("dev.finances:transactions")) || []
-            },
+  function FormModal() {
+    const ModalElement = document.querySelector(".modal-overlay.form");
+    const openModalButton = document.querySelector(".button.new");
+    const cancelModalUse = document.querySelector(".button.cancel.form");
 
-            set(transactions){
-                localStorage.setItem("dev.finances:transactions",JSON.stringify(transactions))
-            }
-        }
+    const ModalFunctions = {
+      toggle: () => () => ModalElement.classList.toggle("active"),
+    };
 
-        const TransactionFunctions = {
-            all: Storage.get(),
+    openModalButton.addEventListener("click", ModalFunctions.toggle());
+    cancelModalUse.addEventListener("click", ModalFunctions.toggle());
+  }
 
-            add(transaction){
-                TransactionFunctions.all.push(transaction)
+  function Transactions() {
+    const Storage = {
+      get() {
+        return (
+          JSON.parse(localStorage.getItem("dev.finances:transactions")) || []
+        );
+      },
 
-                App.reload();
-            },
+      set(transactions) {
+        localStorage.setItem(
+          "dev.finances:transactions",
+          JSON.stringify(transactions)
+        );
+      },
+    };
 
-            remove(index){
-                TransactionFunctions.all.splice(index, 1);
+    const TransactionFunctions = {
+      all: Storage.get(),
 
-                App.reload();
-            },
+      add(transaction) {
+        TransactionFunctions.all.push(transaction);
 
-            incomes(){
-                let income = 0
-                TransactionFunctions.all.forEach(({ amount }) => {
-                    if(amount > 0) income += amount;
-                })
+        App.reload();
+      },
 
-                return income
-            },
+      remove(index) {
+        const transaction = TransactionFunctions.all[index];
 
-            expenses(){
-                let expense = 0
-                TransactionFunctions.all.forEach(({ amount }) => {
-                    if(amount < 0) expense += amount;
-                })
+        TransactionFunctions.all.splice(index, 1);
 
-                return expense
-            },
+        App.reload();
+        return transaction;
+      },
 
-            total(){
-                return TransactionFunctions.incomes() + TransactionFunctions.expenses()
-            }
-        }
+      incomes() {
+        let income = 0;
+        TransactionFunctions.all.forEach(({ amount }) => {
+          if (amount > 0) income += amount;
+        });
 
-        const DOM = {
-            transactionsContainer:document.querySelector('#data-table tbody'),
+        return income;
+      },
 
-            addTransaction( transaction,index ){
-               const tr = document.createElement('tr');
-               tr.innerHTML = DOM.innerHtmlTransaction(transaction,index)
-               tr.dataset.index = index
-               const image = tr.querySelector(`img#remove_${index}`)
-               image.addEventListener('click',() => {
-                  TransactionFunctions.remove(index)
-                  window.NotificateUser(`A transação selecionada foi removida`)
-               })
+      expenses() {
+        let expense = 0;
+        TransactionFunctions.all.forEach(({ amount }) => {
+          if (amount < 0) expense += amount;
+        });
 
-               DOM.transactionsContainer.appendChild(tr)
+        return expense;
+      },
 
-            },
+      total() {
+        return TransactionFunctions.incomes() + TransactionFunctions.expenses();
+      },
+    };
 
-            innerHtmlTransaction({ description, amount,date },index){
-                if(!description && !amount && !date ) return '';
-                const CSSClass = amount < 0 ? "expense" : "income"
+    const DOM = {
+      transactionsContainer: document.querySelector("#data-table tbody"),
 
-                const formatedAmount = Utils.formatCurrency(amount)
+      addTransaction(transaction, index) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = DOM.innerHtmlTransaction(transaction, index);
+        tr.dataset.index = index;
+        const image = tr.querySelector(`img#remove_${index}`);
+        image.addEventListener("click", () => {
+          const { description } = TransactionFunctions.remove(index);
+          window.NotificateUser(`A transação ${description} foi removida`);
+        });
 
-                const html = `
+        DOM.transactionsContainer.appendChild(tr);
+      },
+
+      innerHtmlTransaction({ description, amount, date }, index) {
+        if (!description && !amount && !date) return "";
+        const CSSClass = amount < 0 ? "expense" : "income";
+
+        const formatedAmount = Utils.formatCurrency(amount);
+
+        const html = `
                     <td class="description">${description}</td>
                     <td class="${CSSClass}">${formatedAmount}</td>
                     <td class="date">${date}</td>
@@ -122,259 +129,272 @@ function start(){
                     </td>
                 `;
 
-                return html;
-            },
+        return html;
+      },
 
-            updateBalance(){
-                document
-                    .getElementById('incomeDisplay')
-                    .innerHTML = Utils.formatCurrency(TransactionFunctions.incomes())
+      updateBalance() {
+        document.getElementById(
+          "incomeDisplay"
+        ).innerHTML = Utils.formatCurrency(TransactionFunctions.incomes());
 
-                document
-                    .getElementById('expenseDisplay')
-                    .innerHTML = Utils.formatCurrency(TransactionFunctions.expenses())
+        document.getElementById(
+          "expenseDisplay"
+        ).innerHTML = Utils.formatCurrency(TransactionFunctions.expenses());
 
-                document
-                    .getElementById('totalDisplay')
-                    .innerHTML = Utils.formatCurrency(TransactionFunctions.total())
-            },
+        document.getElementById(
+          "totalDisplay"
+        ).innerHTML = Utils.formatCurrency(TransactionFunctions.total());
+      },
 
-            clearTransactions(){
-                DOM.transactionsContainer.innerHTML = '';
-            }
-        }
+      clearTransactions() {
+        DOM.transactionsContainer.innerHTML = "";
+      },
+    };
 
-        const App = {
-            init(){
-                TransactionFunctions.all.forEach(DOM.addTransaction)
+    const App = {
+      init() {
+        TransactionFunctions.all.forEach(DOM.addTransaction);
 
-                DOM.updateBalance()
+        DOM.updateBalance();
 
-                Storage.set(TransactionFunctions.all)
-            },
-            reload(){
-                DOM.clearTransactions()
-                App.init()
-            }
-        }
+        Storage.set(TransactionFunctions.all);
+      },
+      reload() {
+        DOM.clearTransactions();
+        App.init();
+      },
+    };
 
-        window.APP = App;
-        window.TransactionFunctions = TransactionFunctions;
+    window.APP = App;
+    window.TransactionFunctions = TransactionFunctions;
+  }
+
+  function Form() {
+    const descriptionInput = document.querySelector("input#description");
+    const amountInput = document.querySelector("input#amount");
+    const dateInput = document.querySelector("input#date");
+
+    function getValues() {
+      return {
+        description: descriptionInput.value,
+        amount: amountInput.value,
+        date: dateInput.value,
+      };
     }
 
-    function Form(){
-        const descriptionInput = document.querySelector('input#description')
-        const amountInput = document.querySelector('input#amount')
-        const dateInput = document.querySelector('input#date')
-
-        function getValues(){
-            return {
-                description: descriptionInput.value,
-                amount: amountInput.value,
-                date: dateInput.value,
-            }
-        }
-
-        function validateFields(){
-            const { description, amount, date } = getValues()
-            if( description.trim() === "" || 
-                amount.trim() === "" || 
-                date.trim() === ""){
-                throw new Error('Por favor,preencha todos os campos')
-            }
-        }
-
-        function formatValues(){
-            const { description, amount, date } = getValues()
-
-            const formatedAmount = Utils.formatAmount(amount)
-            const formatedDate = Utils.formatDate(date)
-
-            return { 
-                description, 
-                amount:formatedAmount, 
-                date:formatedDate 
-            }
-        }
-
-        function closeModal(){
-            removeErrors()
-            document.querySelector('.button.cancel').click()
-        }
-
-        async function showErrorToUser(error){
-            const errorContainer = document.querySelector('.input-group.error p');
-            errorContainer.innerHTML = error;
-
-            const errorLine = document.querySelector('.error-line')
-            while(errorLine.style.width !== '100%'){
-                const width = Number(errorLine.style.width.replace('%', '')); 
-                await Utils.sleep(1)
-                errorLine.style.width = `${width + 1}%`;
-            }
-
-        }
-
-        async function removeErrors(){
-            const errorLine = document.querySelector('.error-line')
-            errorLine.style.width = '0%' 
-
-            const errorContainer = document.querySelector('.input-group.error p');
-            errorContainer.innerHTML = '';
-        }
-
-        function clearFields(){
-            descriptionInput.value = ""
-            amountInput.value = ""
-            dateInput.value = ""
-        }
-
-        const formElement = document.querySelector('form');
-        formElement.addEventListener('submit',event => {
-            event.preventDefault()
-            
-            try{
-                removeErrors()
-                validateFields()
-                const transaction = formatValues()
-                window.TransactionFunctions.add(transaction)
-                window.NotificateUser(`A transação ${transaction.description} foi adicionada`)
-                clearFields()
-                closeModal()
-            }catch(error){
-                showErrorToUser(error.message)
-            }
-        })
+    function validateFields() {
+      const { description, amount, date } = getValues();
+      if (
+        description.trim() === "" ||
+        amount.trim() === "" ||
+        date.trim() === ""
+      ) {
+        throw new Error("Por favor,preencha todos os campos");
+      }
     }
 
-    function DarkMode(){
-        const darkModeCheckbox = document.querySelector('#switch')
+    function formatValues() {
+      const { description, amount, date } = getValues();
 
-        function changeText(hasDarkMode){
-            const p = document.querySelector('.toggle p')
-            p.textContent = hasDarkMode ? 'Dark Mode' : 'Light Mode';
-            darkModeCheckbox.checked = p.textContent === "Dark Mode"
-            window.NotificateUser(`Tema selecionado:${p.textContent || 'Light Mode'}`)
-        }
+      const formatedAmount = Utils.formatAmount(amount);
+      const formatedDate = Utils.formatDate(date);
 
-        const onChangeButton = () => {
-            const html = document.querySelector('html')
-            const hasDarkMode = html.classList.toggle('dark-mode')
-            
-            localStorage.setItem("dev.finances:mode", String(hasDarkMode))
-            changeText(hasDarkMode)
-        }
-
-        const hasDarkMode = (localStorage.getItem("dev.finances:mode") || "false") === "false" ? false : true;
-
-        changeText(hasDarkMode)
-        if(hasDarkMode) onChangeButton()
-
-        darkModeCheckbox.addEventListener('change',onChangeButton)
+      return {
+        description,
+        amount: formatedAmount,
+        date: formatedDate,
+      };
     }
 
-    function Notifications(message){
-        if (!("Notification" in window)) return;
-        if(!message) return
-        
-        if (Notification.permission === "granted") {
-            const notification = new Notification(message);
-        }
-        
-        else if (Notification.permission !== 'denied') {
-            Notification.requestPermission( permission => {
-              if (permission === "granted") {
-                const notification = new Notification(message);
-            }})
-        }
+    function closeModal() {
+      removeErrors();
+      document.querySelector(".button.cancel").click();
     }
 
-    function Squares(){
-        const ulSquares = document.querySelector("ul.squares")
-        const random = (min , max) => Math.random() * (max - min) + min;
+    async function showErrorToUser(error) {
+      const errorContainer = document.querySelector(".input-group.error p");
+      errorContainer.innerHTML = error;
 
-        for(let squareIndex = 0; squareIndex <= 6;squareIndex++){
-            const li = document.createElement("li")
+      const errorLine = document.querySelector(".error-line");
+      while (errorLine.style.width !== "100%") {
+        const width = Number(errorLine.style.width.replace("%", ""));
+        await Utils.sleep(1);
+        errorLine.style.width = `${width + 1}%`;
+      }
+    }
 
-            const size = Math.floor(random(10,120));
-            const bottom = Math.floor(random(1,20));
-            const position = random(1, 99);
-            const delay = random(5, 0.1);
-            const duration = random(24, 12);
+    async function removeErrors() {
+      const errorLine = document.querySelector(".error-line");
+      errorLine.style.width = "0%";
 
-            li.style.width = `${size}px`;
-            li.style.height = `${size}px`;
-            li.style.bottom = `${bottom}px`;
+      const errorContainer = document.querySelector(".input-group.error p");
+      errorContainer.innerHTML = "";
+    }
 
-            li.style.left = `${position}%`
+    function clearFields() {
+      descriptionInput.value = "";
+      amountInput.value = "";
+      dateInput.value = "";
+    }
 
-            li.style.animationDelay = `${delay}s`
-            li.style.animationDuration = `${duration}s`
-            li.style.animationTimingFunction = `cubic-bezier(${Math.random()},${Math.random()},${Math.random()},${Math.random()})`
+    const formElement = document.querySelector("form");
+    formElement.addEventListener("submit", (event) => {
+      event.preventDefault();
 
-            ulSquares.appendChild(li)
+      try {
+        removeErrors();
+        validateFields();
+        const transaction = formatValues();
+        window.TransactionFunctions.add(transaction);
+        window.NotificateUser(
+          `A transação ${transaction.description} foi adicionada`
+        );
+        clearFields();
+        closeModal();
+      } catch (error) {
+        showErrorToUser(error.message);
+      }
+    });
+  }
+
+  function DarkMode() {
+    const darkModeCheckbox = document.querySelector("#switch");
+
+    function changeText(hasDarkMode) {
+      const p = document.querySelector(".toggle p");
+      p.textContent = hasDarkMode ? "Dark Mode" : "Light Mode";
+      darkModeCheckbox.checked = p.textContent === "Dark Mode";
+      window.NotificateUser(
+        `Tema selecionado:${p.textContent || "Light Mode"}`
+      );
+    }
+
+    const onChangeButton = () => {
+      const html = document.querySelector("html");
+      const hasDarkMode = html.classList.toggle("dark-mode");
+
+      localStorage.setItem("dev.finances:mode", String(hasDarkMode));
+      changeText(hasDarkMode);
+    };
+
+    const hasDarkMode =
+      (localStorage.getItem("dev.finances:mode") || "false") === "false"
+        ? false
+        : true;
+
+    changeText(hasDarkMode);
+    if (hasDarkMode) onChangeButton();
+
+    darkModeCheckbox.addEventListener("change", onChangeButton);
+  }
+
+  function Notifications(message) {
+    if (!("Notification" in window)) return;
+    if (!message) return;
+
+    if (Notification.permission === "granted") {
+      const notification = new Notification(message);
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission((permission) => {
+        if (permission === "granted") {
+          const notification = new Notification(message);
         }
+      });
     }
+  }
 
-    function DownloadJSON(){
-        const downloadModal = document.querySelector('.modal-overlay.download')
+  function Squares() {
+    const ulSquares = document.querySelector("ul.squares");
+    const random = (min, max) => Math.random() * (max - min) + min;
 
-        const downloadButton = document.querySelector('.button.open-modal-download');
-        const closeModalButton = document.querySelector('.button.cancel-download')
-        const saveJsonButton = document.querySelector('.button.download-json')
+    for (let squareIndex = 0; squareIndex <= 6; squareIndex++) {
+      const li = document.createElement("li");
 
-        function getText(){
-            const array = [];
-            window.TransactionFunctions.all.forEach(({ amount,description,date }) => {
-                const formatedAmount = Utils.formatCurrency(amount);
-                array.push({ formatedAmount, description, date })
-            })
+      const size = Math.floor(random(10, 120));
+      const bottom = Math.floor(random(1, 20));
+      const position = random(1, 99);
+      const delay = random(5, 0.1);
+      const duration = random(24, 12);
 
-            array.push({ 
-                incomes:Utils.formatCurrency(TransactionFunctions.incomes()) ,
-                expenses:Utils.formatCurrency(TransactionFunctions.expenses()) ,
-                total:Utils.formatCurrency(TransactionFunctions.total()) ,
-            })
+      li.style.width = `${size}px`;
+      li.style.height = `${size}px`;
+      li.style.bottom = `${bottom}px`;
 
-            return array
+      li.style.left = `${position}%`;
+
+      li.style.animationDelay = `${delay}s`;
+      li.style.animationDuration = `${duration}s`;
+      li.style.animationTimingFunction = `cubic-bezier(${Math.random()},${Math.random()},${Math.random()},${Math.random()})`;
+
+      ulSquares.appendChild(li);
+    }
+  }
+
+  function DownloadJSON() {
+    const downloadModal = document.querySelector(".modal-overlay.download");
+
+    const downloadButton = document.querySelector(
+      ".button.open-modal-download"
+    );
+    const closeModalButton = document.querySelector(".button.cancel-download");
+    const saveJsonButton = document.querySelector(".button.download-json");
+
+    function getText() {
+      const array = [];
+      window.TransactionFunctions.all.forEach(
+        ({ amount, description, date }) => {
+          const formatedAmount = Utils.formatCurrency(amount);
+          array.push({ formatedAmount, description, date });
         }
+      );
 
-        downloadButton.addEventListener('click',() => {
-            const transactionsInString = JSON.stringify(getText(),null, 4);
+      array.push({
+        incomes: Utils.formatCurrency(TransactionFunctions.incomes()),
+        expenses: Utils.formatCurrency(TransactionFunctions.expenses()),
+        total: Utils.formatCurrency(TransactionFunctions.total()),
+      });
 
-            downloadModal.classList.add('active')
-            downloadModal.querySelector('pre').innerHTML = transactionsInString;
-        })
-
-        closeModalButton.addEventListener('click',() => downloadModal.classList.remove('active'))
-          
-        saveJsonButton.addEventListener('click',() => {
-            const transactionsInString = JSON.stringify(getText(),null, 4);
-            const blobOfFile = new Blob([ transactionsInString ], {
-                type: 'application/json'
-            })
-            const anchora = document.createElement('a')
-            anchora.href = window.URL.createObjectURL(blobOfFile);
-            const filename = `transactions-${Date.now()}.json`
-            anchora.download = filename
-
-            document.body.appendChild(anchora)
-            anchora.click()
-            document.body.removeChild(anchora)   
-            
-            downloadModal.classList.remove('active')
-            window.NotificateUser(`O arquivo ${filename} foi baixado`) 
-        })
+      return array;
     }
 
-    return () => {
-        window.NotificateUser = Notifications;
-        Squares()
-        DarkMode();
-        Transactions();
-        DownloadJSON();
-        FormModal();
-        Form();
-        window.APP.init()
-    }
+    downloadButton.addEventListener("click", () => {
+      const transactionsInString = JSON.stringify(getText(), null, 4);
+
+      downloadModal.classList.add("active");
+      downloadModal.querySelector("pre").innerHTML = transactionsInString;
+    });
+
+    closeModalButton.addEventListener("click", () =>
+      downloadModal.classList.remove("active")
+    );
+
+    saveJsonButton.addEventListener("click", () => {
+      const transactionsInString = JSON.stringify(getText(), null, 4);
+      const blobOfFile = new Blob([transactionsInString], {
+        type: "application/json",
+      });
+      const anchora = document.createElement("a");
+      anchora.href = window.URL.createObjectURL(blobOfFile);
+      const filename = `transactions-${Date.now()}.json`;
+      anchora.download = filename;
+
+      document.body.appendChild(anchora);
+      anchora.click();
+      document.body.removeChild(anchora);
+
+      downloadModal.classList.remove("active");
+      window.NotificateUser(`O arquivo ${filename} foi baixado`);
+    });
+  }
+
+  return () => {
+    window.NotificateUser = Notifications;
+    Squares();
+    DarkMode();
+    Transactions();
+    DownloadJSON();
+    FormModal();
+    Form();
+    window.APP.init();
+  };
 }
