@@ -37,10 +37,10 @@ html {
 }
 
 body {
-  height: 100%;
   background: var(--gray);
   font-family: "Poppins", sans-serif;
   overflow-x:hidden ;
+  position: relative;
 }
 
 .sr-only {
@@ -131,7 +131,7 @@ button:hover {
   position:absolute;
   max-width: 100px;
   padding: 10px;
-  bottom: -55%;
+  bottom: 1%;
   left: 3%;
   cursor:pointer;
   z-index:999;
@@ -153,6 +153,8 @@ header {
 /* ===   Balance   === */
 #balance {
   margin-top: -8rem;
+  position: relative;
+  z-index: 99;
 }
 
 #balance h2 {
@@ -448,9 +450,5 @@ footer {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
-  }
-
-  .button.open-modal-download {
-    bottom: 3%;
   }
 }
