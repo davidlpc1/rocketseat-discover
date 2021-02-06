@@ -32,6 +32,8 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
+    <noscript>Please enable JavaScript to view all the features</noscript>
+
     <header>
       <img src="./assets/logo.svg" alt="Logo Dev Finance " />
       <div class="toggle">
@@ -94,6 +96,16 @@
       </section>
     </main>
 
+    <div class="modal-overlay acessibility">
+      <div class="modal">
+        <p>Deseja habilitar as notificações por voz além das de texto</p>
+        <div class="input-group actions">
+          <a href="#" class="button cancel cancel_voice">Deixa para lá</a>
+          <button class="button accept_voice">Sim</button>
+        </div>
+      </div>
+    </div>
+
     <div class="modal-overlay form">
       <div class="error-line"></div>
       <div class="modal">
@@ -144,7 +156,6 @@
       </div>
     </div>
 
-    
     <button class="button open-modal-download">Baixar JSON</button>
 
     <div class="modal-overlay download">
