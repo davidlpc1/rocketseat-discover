@@ -1,39 +1,44 @@
 window.addEventListener("DOMContentLoaded", start());
 
 function start() {
-  function LoadingAppAnimation(){
+  function LoadingAppAnimation() {
     const timeline = new TimelineMax();
     timeline
       .fromTo(
-          '.bg-loader', 1 ,
-          { width:'100%' }, 
-          { width:'0%',delay: 5,ease:Expo.easeInOut } 
+        ".bg-loader",
+        1,
+        { width: "100%" },
+        { width: "0%", delay: 5, ease: Expo.easeInOut }
       )
       .fromTo(
-          'header', 2 ,
-          { width:'0%',opacity: 0 }, 
-          { width:'100%',opacity: 1 ,ease:Expo.easeInOut},
-          '-=1' 
+        "header",
+        2,
+        { width: "0%", opacity: 0 },
+        { width: "100%", opacity: 1, ease: Expo.easeInOut },
+        "-=1"
       )
       .fromTo(
-          'main.container', 0.7 ,
-          { y:-50,opacity: 0 }, 
-          { y:0,opacity: 1 ,ease:Expo.easeInOut},
-          '-=0.5' 
+        "main.container",
+        0.7,
+        { y: -50, opacity: 0 },
+        { y: 0, opacity: 1, ease: Expo.easeInOut },
+        "-=0.5"
       )
 
       .fromTo(
-          '.button.open-modal-download', 0.7 ,
-          { y:-50,opacity: 0 }, 
-          { y:0,opacity: 1 ,ease:Expo.easeInOut},
-          '-=0.5' 
+        ".button.open-modal-download",
+        0.7,
+        { y: -50, opacity: 0 },
+        { y: 0, opacity: 1, ease: Expo.easeInOut },
+        "-=0.5"
       )
       .fromTo(
-        'footer p', 0.7 ,
-        { y:-50,opacity: 0 }, 
-        { y:0,opacity: 1 ,ease:Expo.easeInOut},
-        '-=0.5' 
-      )
+        "footer p",
+        0.7,
+        { y: -50, opacity: 0 },
+        { y: 0, opacity: 1, ease: Expo.easeInOut },
+        "-=0.5"
+      );
   }
 
   const Utils = {
@@ -144,8 +149,10 @@ function start() {
         image.addEventListener("click", () => {
           const { description } = TransactionFunctions.remove(index);
           window.NotificateUser(`A transação ${description} foi removida`);
-          if(window.userAcceptedVoice) {
-            window.notificateUserByVoice(`A transação ${description} foi removida`)
+          if (window.userAcceptedVoice) {
+            window.notificateUserByVoice(
+              `A transação ${description} foi removida`
+            );
           }
         });
 
@@ -288,8 +295,10 @@ function start() {
         window.NotificateUser(
           `A transação ${transaction.description} foi adicionada`
         );
-        if(window.userAcceptedVoice) {
-          window.notificateUserByVoice( `A transação ${transaction.description} foi adicionada`)
+        if (window.userAcceptedVoice) {
+          window.notificateUserByVoice(
+            `A transação ${transaction.description} foi adicionada`
+          );
         }
         clearFields();
         closeModal();
@@ -309,8 +318,10 @@ function start() {
       window.NotificateUser(
         `Tema selecionado:${p.textContent || "Light Mode"}`
       );
-      if(window.userAcceptedVoice) {
-        window.notificateUserByVoice(`Tema selecionado:${p.textContent || "Light Mode"}`)
+      if (window.userAcceptedVoice) {
+        window.notificateUserByVoice(
+          `Tema selecionado:${p.textContent || "Light Mode"}`
+        );
       }
     }
 
@@ -429,58 +440,72 @@ function start() {
 
       downloadModal.classList.remove("active");
       window.NotificateUser(`O arquivo ${filename} foi baixado`);
-      if(window.userAcceptedVoice) {
-        window.notificateUserByVoice(`O arquivo json foi baixado`)
+      if (window.userAcceptedVoice) {
+        window.notificateUserByVoice(`O arquivo json foi baixado`);
       }
     });
   }
 
-  function VoiceNotificationsModalManipulation(){
-    const voiceNotificationsModal = document.querySelector(".modal-overlay.acessibility")
-    const userAlreadyUseThisApp = (localStorage.getItem("dev.finances:user_already_use_this_app") || "false") === "true" ? true : false
-    if(userAlreadyUseThisApp) {
-      window.userAcceptedVoice = (localStorage.getItem("dev.finances:voicenotifications") || "false") === "true" ? true : false;
+  function VoiceNotificationsModalManipulation() {
+    const voiceNotificationsModal = document.querySelector(
+      ".modal-overlay.acessibility"
+    );
+    const userAlreadyUseThisApp =
+      (localStorage.getItem("dev.finances:user_already_use_this_app") ||
+        "false") === "true"
+        ? true
+        : false;
+    if (userAlreadyUseThisApp) {
+      window.userAcceptedVoice =
+        (localStorage.getItem("dev.finances:voicenotifications") || "false") ===
+        "true"
+          ? true
+          : false;
       return;
-    };
-    voiceNotificationsModal.classList.add("active")
-    const cancelVoiceButton = voiceNotificationsModal.querySelector('.button.cancel_voice')
-    const acceptVoiceButton = voiceNotificationsModal.querySelector('.button.accept_voice')
-    const userHaveClicked = () => {
-      localStorage.setItem("dev.finances:user_already_use_this_app","true")
-      voiceNotificationsModal.classList.remove("active")
     }
+    voiceNotificationsModal.classList.add("active");
+    const cancelVoiceButton = voiceNotificationsModal.querySelector(
+      ".button.cancel_voice"
+    );
+    const acceptVoiceButton = voiceNotificationsModal.querySelector(
+      ".button.accept_voice"
+    );
+    const userHaveClicked = () => {
+      localStorage.setItem("dev.finances:user_already_use_this_app", "true");
+      voiceNotificationsModal.classList.remove("active");
+    };
 
-    cancelVoiceButton.addEventListener("click",() => {
-      localStorage.setItem("dev.finances:voicenotifications","false")
+    cancelVoiceButton.addEventListener("click", () => {
+      localStorage.setItem("dev.finances:voicenotifications", "false");
       window.userAcceptedVoice = false;
 
-      userHaveClicked()
-    })
+      userHaveClicked();
+    });
 
-    acceptVoiceButton.addEventListener("click",() => {
-      localStorage.setItem("dev.finances:voicenotifications","true")
+    acceptVoiceButton.addEventListener("click", () => {
+      localStorage.setItem("dev.finances:voicenotifications", "true");
       window.userAcceptedVoice = true;
 
-      userHaveClicked()
-    })
+      userHaveClicked();
+    });
   }
 
-  function VoiceNotifications(){
-    if (!'speechSynthesis' in window) return;
-     
-    VoiceNotificationsModalManipulation()
-    if(!window.userAcceptedVoice) return;
-        
+  function VoiceNotifications() {
+    if (!"speechSynthesis" in window) return;
+
+    VoiceNotificationsModalManipulation();
+    if (!window.userAcceptedVoice) return;
+
     // Realy create voice notification
-    function notificateUserByVoice(message){
+    function notificateUserByVoice(message) {
       const msg = new SpeechSynthesisUtterance();
       msg.text = message;
-      msg.lang = 'pt';
-      window.speechSynthesis.speak(msg); 
-      return; 
-    }    
+      msg.lang = "pt";
+      window.speechSynthesis.speak(msg);
+      return;
+    }
 
-   return notificateUserByVoice
+    return notificateUserByVoice;
   }
 
   return () => {
@@ -488,7 +513,7 @@ function start() {
 
     window.NotificateUser = Notifications;
     window.notificateUserByVoice = VoiceNotifications();
-    
+
     SquaresAnimation();
     DarkMode();
     Transactions();
