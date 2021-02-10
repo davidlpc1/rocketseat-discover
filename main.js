@@ -1,7 +1,34 @@
 window.addEventListener("DOMContentLoaded", start());
 
 function start() {
-  function LoadingAppAnimation() {
+  const Utils = {
+    formatCurrency(value) {
+      const signal = Number(value) < 0 ? "-" : "";
+
+      const onlyDigitsInString = String(value).replace(/\D/g, "");
+      const formatedValue = Number(onlyDigitsInString) / 100;
+      const currency = formatedValue.toLocaleString("pt-br", {
+        style: "currency",
+        currency: "BRL",
+      });
+
+      return signal + currency;
+    },
+    sleep(ms) {
+      return new Promise((r) => setTimeout(r, ms));
+    },
+
+    formatAmount(value) {
+      return Math.round(value * 100);
+    },
+
+    formatDate(date) {
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
+    },
+  };
+
+  async function LoadingAppAnimation() {
     const timeline = new TimelineMax();
     timeline
       .fromTo(
@@ -39,34 +66,10 @@ function start() {
         { y: 0, opacity: 1, ease: Expo.easeInOut },
         "-=0.5"
       );
+
+    await Utils.sleep(8 * 1000);
+    return;
   }
-
-  const Utils = {
-    formatCurrency(value) {
-      const signal = Number(value) < 0 ? "-" : "";
-
-      const onlyDigitsInString = String(value).replace(/\D/g, "");
-      const formatedValue = Number(onlyDigitsInString) / 100;
-      const currency = formatedValue.toLocaleString("pt-br", {
-        style: "currency",
-        currency: "BRL",
-      });
-
-      return signal + currency;
-    },
-    sleep(ms) {
-      return new Promise((r) => setTimeout(r, ms));
-    },
-
-    formatAmount(value) {
-      return Math.round(value * 100);
-    },
-
-    formatDate(date) {
-      const [year, month, day] = date.split("-");
-      return `${day}/${month}/${year}`;
-    },
-  };
 
   function FormModalManipulation() {
     const ModalElement = document.querySelector(".modal-overlay.form");
@@ -311,10 +314,11 @@ function start() {
   function DarkMode() {
     const darkModeCheckbox = document.querySelector("#switch");
 
-    function changeText(hasDarkMode) {
+    function changeText(hasDarkMode,showNotification=true) {
       const p = document.querySelector(".toggle p");
       p.textContent = hasDarkMode ? "Dark Mode" : "Light Mode";
       darkModeCheckbox.checked = p.textContent === "Dark Mode";
+      if(!showNotification) return;
       window.NotificateUser(
         `Tema selecionado:${p.textContent || "Light Mode"}`
       );
@@ -338,7 +342,7 @@ function start() {
         ? false
         : true;
 
-    changeText(hasDarkMode);
+    changeText(hasDarkMode,false);
     if (hasDarkMode) onChangeButton();
 
     darkModeCheckbox.addEventListener("change", onChangeButton);
@@ -490,30 +494,30 @@ function start() {
     });
   }
 
-  function VoiceNotifications() {
+  function VoiceNotifications(message) {
     if (!"speechSynthesis" in window) return;
 
     VoiceNotificationsModalManipulation();
     if (!window.userAcceptedVoice) return;
 
     // Realy create voice notification
-    function notificateUserByVoice(message) {
-      const msg = new SpeechSynthesisUtterance();
-      msg.text = message;
-      msg.lang = "pt";
-      window.speechSynthesis.speak(msg);
-      return;
-    }
+    if(!message) return;
+    
+    const msg = new SpeechSynthesisUtterance();
+    msg.text = message;
+    msg.lang = "pt";
+    window.speechSynthesis.speak(msg);
 
-    return notificateUserByVoice;
+    return;
   }
 
-  return () => {
-    LoadingAppAnimation();
+  return async () => {
+    await LoadingAppAnimation();
 
     window.NotificateUser = Notifications;
-    window.notificateUserByVoice = VoiceNotifications();
-
+    window.notificateUserByVoice = VoiceNotifications;
+    
+    VoiceNotifications();
     SquaresAnimation();
     DarkMode();
     Transactions();
