@@ -1,6 +1,41 @@
 window.addEventListener("DOMContentLoaded", start());
 
 function start() {
+  function LoadingAppAnimation(){
+    const timeline = new TimelineMax();
+    timeline
+      .fromTo(
+          '.bg-loader', 1 ,
+          { width:'100%' }, 
+          { width:'0%',delay: 5,ease:Expo.easeInOut } 
+      )
+      .fromTo(
+          'header', 2 ,
+          { width:'0%',opacity: 0 }, 
+          { width:'100%',opacity: 1 ,ease:Expo.easeInOut},
+          '-=1' 
+      )
+      .fromTo(
+          'main.container', 0.7 ,
+          { y:-50,opacity: 0 }, 
+          { y:0,opacity: 1 ,ease:Expo.easeInOut},
+          '-=0.5' 
+      )
+
+      .fromTo(
+          '.button.open-modal-download', 0.7 ,
+          { y:-50,opacity: 0 }, 
+          { y:0,opacity: 1 ,ease:Expo.easeInOut},
+          '-=0.5' 
+      )
+      .fromTo(
+        'footer p', 0.7 ,
+        { y:-50,opacity: 0 }, 
+        { y:0,opacity: 1 ,ease:Expo.easeInOut},
+        '-=0.5' 
+      )
+  }
+
   const Utils = {
     formatCurrency(value) {
       const signal = Number(value) < 0 ? "-" : "";
@@ -28,7 +63,7 @@ function start() {
     },
   };
 
-  function FormModal() {
+  function FormModalManipulation() {
     const ModalElement = document.querySelector(".modal-overlay.form");
     const openModalButton = document.querySelector(".button.new");
     const cancelModalUse = document.querySelector(".button.cancel.form");
@@ -172,7 +207,7 @@ function start() {
     window.TransactionFunctions = TransactionFunctions;
   }
 
-  function Form() {
+  function FormSubmitManipulation() {
     const descriptionInput = document.querySelector("input#description");
     const amountInput = document.querySelector("input#amount");
     const dateInput = document.querySelector("input#date");
@@ -313,7 +348,7 @@ function start() {
     }
   }
 
-  function Squares() {
+  function SquaresAnimation() {
     const ulSquares = document.querySelector("ul.squares");
     const random = (min, max) => Math.random() * (max - min) + min;
 
@@ -400,7 +435,7 @@ function start() {
     });
   }
 
-  function VoiceNotificationsModal(){
+  function VoiceNotificationsModalManipulation(){
     const voiceNotificationsModal = document.querySelector(".modal-overlay.acessibility")
     const userAlreadyUseThisApp = (localStorage.getItem("dev.finances:user_already_use_this_app") || "false") === "true" ? true : false
     if(userAlreadyUseThisApp) {
@@ -433,7 +468,7 @@ function start() {
   function VoiceNotifications(){
     if (!'speechSynthesis' in window) return;
      
-    VoiceNotificationsModal()
+    VoiceNotificationsModalManipulation()
     if(!window.userAcceptedVoice) return;
         
     // Realy create voice notification
@@ -449,15 +484,17 @@ function start() {
   }
 
   return () => {
+    LoadingAppAnimation();
+
     window.NotificateUser = Notifications;
     window.notificateUserByVoice = VoiceNotifications();
     
-    Squares();
+    SquaresAnimation();
     DarkMode();
     Transactions();
     DownloadJSON();
-    FormModal();
-    Form();
+    FormModalManipulation();
+    FormSubmitManipulation();
 
     window.APP.init();
   };

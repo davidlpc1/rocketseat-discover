@@ -32,6 +32,12 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
 html {
   font-size: 93.75%; /* 15px */
 }
@@ -39,7 +45,6 @@ html {
 body {
   background: var(--gray);
   font-family: "Poppins", sans-serif;
-  overflow-x:hidden ;
   position: relative;
 }
 
@@ -128,13 +133,52 @@ button:hover {
 }
 
 .button.open-modal-download {
-  position:absolute;
+  position: absolute;
   max-width: 100px;
   padding: 10px;
-  bottom: 1%;
+  margin: 10px;
   left: 3%;
-  cursor:pointer;
-  z-index:999;
+  cursor: pointer;
+  z-index: 999;
+}
+
+/* ===   Loading animation   === */
+.bg-loader {
+  overflow: hidden;
+
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  z-index: 9999;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: var(--header);
+}
+
+.logo-loader {
+  animation: logoLoader 12s ease infinite alternate;
+}
+
+@keyframes logoLoader {
+  0% {
+    stroke-width: 0;
+    stroke-dasharray: 1 100;
+  }
+  25% {
+    stroke-width: 1;
+    stroke-dasharray: 100 0;
+  }
+  60%,
+  100% {
+    stroke-width: 0.3;
+    fill: var(--green);
+  }
 }
 
 /* ===   Header   === */
@@ -205,7 +249,7 @@ header {
 
 .toggle p {
   color: var(--white);
-  margin-right: .4rem;
+  margin-right: 0.4rem;
 }
 
 input[type="checkbox"] {
@@ -270,11 +314,13 @@ label.checkbox:active:after {
 table thead tr th:first-child,
 table tbody tr td:first-child {
   border-radius: 0.25rem 0 0 0.25rem;
+  z-index: 99;
 }
 
 table thead tr th:last-child,
 table tbody tr td:last-child {
   border-radius: 0 0.25rem 0.25rem 0;
+  z-index: 99;
 }
 
 table thead th {
@@ -283,10 +329,12 @@ table thead th {
   font-weight: normal;
   padding: 1rem 2rem;
 
+  z-index: 99;
   text-align: left;
 }
 
 table tbody tr {
+  z-index: 99;
   opacity: 0.7;
 }
 
@@ -296,6 +344,7 @@ table tbody tr:hover {
 
 table tbody td {
   background: var(--white);
+  z-index: 99;
   padding: 1rem 2rem;
 }
 
@@ -346,7 +395,7 @@ td.expense {
 }
 
 .modal-overlay.download pre {
-  margin: 10px
+  margin: 10px;
 }
 
 /* ===   Form   === */
